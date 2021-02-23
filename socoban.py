@@ -30,7 +30,8 @@ tile_images = {
     'wall': load_image('wall.png'),
     'empty': load_image('grass.png'),
     'box': load_image('box.png'),
-    'place': load_image('place.png')
+    'place': load_image('place.png'),
+    'solved': load_image('solved.png')
 }
 player_image = load_image('mar.png')
 
@@ -305,9 +306,10 @@ def win():
 
 
 start_screen()
-level_map = load_level("map.map")
+level_map = load_level("map0.map")
 level_map_start = copy.deepcopy(level_map)
 hero, max_x, max_y = generate_level(level_map)
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -321,9 +323,7 @@ while running:
                 move(hero, "left")
             elif event.key == pygame.K_RIGHT:
                 move(hero, "right")
-    if win():
-        print('You great win!!!')
-        running = False
+
     screen.fill(pygame.Color("black"))
     box_group.update()
     sprite_group.draw(screen)
@@ -331,4 +331,19 @@ while running:
     hero_group.draw(screen)
     clock.tick(FPS)
     pygame.display.flip()
+
+    if win():
+        print('You great win!!!')
+        solvedRect = tile_images['solved'].get_rect()
+        solvedRect.center = (450, 325)
+        screen.blit(tile_images['solved'], solvedRect)
+        you_win_break = True
+        while you_win_break:
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        you_win_break = False
+            clock.tick(FPS)
+            pygame.display.flip()
+        running = False
 pygame.quit()
