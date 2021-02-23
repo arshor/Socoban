@@ -24,7 +24,7 @@ screen_size = (950, 550)
 screen = pygame.display.set_mode(screen_size)
 FPS = 50
 Boxes = 0
-hero_look = 'left'
+num_level = 0
 
 tile_images = {
     'wall': load_image('wall.png'),
@@ -306,7 +306,7 @@ def win():
 
 
 start_screen()
-level_map = load_level("map0.map")
+level_map = load_level("map" + str(num_level) + ".map")
 level_map_start = copy.deepcopy(level_map)
 hero, max_x, max_y = generate_level(level_map)
 
@@ -345,5 +345,16 @@ while running:
                         you_win_break = False
             clock.tick(FPS)
             pygame.display.flip()
-        running = False
+        num_level += 1
+        if num_level == 2:
+            running = False
+        else:
+            sprite_group.empty()
+            box_group.empty()
+            hero_group.empty()
+            Boxes = 0
+            level_map = load_level("map" + str(num_level) + ".map")
+            level_map_start = copy.deepcopy(level_map)
+            hero, max_x, max_y = generate_level(level_map)
+
 pygame.quit()
