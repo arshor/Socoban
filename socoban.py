@@ -333,7 +333,7 @@ while running:
     pygame.display.flip()
 
     if win():
-        print('You great win!!!')
+        # print('You great win!!!')
         solvedRect = tile_images['solved'].get_rect()
         solvedRect.center = (450, 325)
         screen.blit(tile_images['solved'], solvedRect)
