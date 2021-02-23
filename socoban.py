@@ -24,6 +24,7 @@ screen_size = (950, 550)
 screen = pygame.display.set_mode(screen_size)
 FPS = 50
 Boxes = 0
+hero_look = 'left'
 
 tile_images = {
     'wall': load_image('wall.png'),
@@ -116,20 +117,24 @@ def terminate():
 
 
 def start_screen():
-    intro_text = ["Перемещение героя", "",
-                  "Герой двигается",
-                  "Карта на месте"]
-    pygame.display.set_caption('Mario Sokoban')
-    fon = pygame.transform.scale(load_image('fon.jpg'), screen_size)
+    intro_text = ["Классическая головоломка!!!",
+                  "Цель:",
+                  "Необходимо все ящики",
+                  "установить на звезды.",
+                  "Управление - стрелки.",
+                  "Старт - любое действие.",
+                  "Вперед!!!!"]
+    pygame.display.set_caption('Super Mario Sokoban')
+    fon = pygame.transform.scale(load_image('fon.png'), screen_size)
     screen.blit(fon, (0, 0))
     font = pygame.font.Font(None, 30)
-    text_coord = 50
+    text_coord = 200
     for line in intro_text:
-        string_rendered = font.render(line, 1, pygame.Color('black'))
+        string_rendered = font.render(line, 1, pygame.Color('white'))
         intro_rect = string_rendered.get_rect()
         text_coord += 10
         intro_rect.top = text_coord
-        intro_rect.x = 10
+        intro_rect.x = 600
         text_coord += intro_rect.height
         screen.blit(string_rendered, intro_rect)
 
@@ -231,6 +236,8 @@ def move(hero, movement):
             Box('box', x, y + 2)
             hero.move(x, y + 1)
     elif movement == "left":
+        hero.image = player_image
+
         if x > 0 and (level_map[y][x - 1] == "." or level_map[y][x - 1] == "*"):
             hero.move(x - 1, y)
         elif x > 1 and level_map[y][x - 1] == "%" and level_map[y][x - 2] == ".":
@@ -239,7 +246,27 @@ def move(hero, movement):
             Tile('empty', x - 1, y)
             Box('box', x - 2, y)
             hero.move(x - 1, y)
+        elif x > 1 and level_map[y][x - 1] == "%" and level_map[y][x - 2] == "*":
+            level_map[y][x - 2] = "%*"
+            level_map[y][x - 1] = "."
+            Tile('empty', x - 1, y)
+            Box('box', x - 2, y)
+            hero.move(x - 1, y)
+        elif x > 1 and level_map[y][x - 1] == "%*" and level_map[y][x - 2] == ".":
+            level_map[y][x - 2] = "%"
+            level_map[y][x - 1] = "*"
+            Tile('place', x - 1, y)
+            Box('box', x - 2, y)
+            hero.move(x - 1, y)
+        elif x > 1 and level_map[y][x - 1] == "%*" and level_map[y][x - 2] == "*":
+            level_map[y][x - 2] = "%*"
+            level_map[y][x - 1] = "*"
+            Tile('place', x - 1, y)
+            Box('box', x - 2, y)
+            hero.move(x - 1, y)
     elif movement == "right":
+        hero.image = pygame.transform.flip(player_image, True, False)
+
         if x < max_x - 1 and (level_map[y][x + 1] == "." or level_map[y][x + 1] == "*"):
             hero.move(x + 1, y)
         elif x < max_x - 2 and level_map[y][x + 1] == "%" and level_map[y][x + 2] == ".":
