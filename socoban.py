@@ -2,7 +2,7 @@ import pygame
 import os
 import sys
 import copy
-
+from pathlib import Path
 
 def load_image(name, color_key=None):
     fullname = os.path.join('data', name)
@@ -19,12 +19,24 @@ def load_image(name, color_key=None):
     return image
 
 
+def count_lvs():
+    result = 0
+
+    for currentdir, dirs, files in os.walk('data'):
+        for file in files:
+            if '.map' in file:
+                result += 1
+
+    return result
+
+
 pygame.init()
 screen_size = (950, 550)
 screen = pygame.display.set_mode(screen_size)
 FPS = 50
 Boxes = 0
 num_level = 0
+count_levels = count_lvs()
 
 tile_images = {
     'wall': load_image('wall.png'),
@@ -125,11 +137,13 @@ def start_screen():
                   "Управление - стрелки.",
                   "Старт - любое действие.",
                   "Вперед!!!!"]
+
     pygame.display.set_caption('Super Mario Sokoban')
     fon = pygame.transform.scale(load_image('fon.png'), screen_size)
     screen.blit(fon, (0, 0))
     font = pygame.font.Font(None, 30)
     text_coord = 200
+
     for line in intro_text:
         string_rendered = font.render(line, 1, pygame.Color('white'))
         intro_rect = string_rendered.get_rect()
@@ -333,7 +347,6 @@ while running:
     pygame.display.flip()
 
     if win():
-        # print('You great win!!!')
         solvedRect = tile_images['solved'].get_rect()
         solvedRect.center = (450, 325)
         screen.blit(tile_images['solved'], solvedRect)
@@ -341,12 +354,12 @@ while running:
         while you_win_break:
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE:
-                        you_win_break = False
+                    #if event.key == pygame.K_SPACE:
+                    you_win_break = False
             clock.tick(FPS)
             pygame.display.flip()
         num_level += 1
-        if num_level == 2:
+        if num_level == count_levels:
             running = False
         else:
             sprite_group.empty()
